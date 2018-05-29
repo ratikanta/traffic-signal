@@ -12,9 +12,8 @@ class App extends Component {
       green: false,
       next: "yellow"
     }
-    this.handleClick1 = this.handleClick1.bind(this);
-    this.handleClick2 = this.handleClick2.bind(this);
-    this.handleClick3 = this.handleClick3.bind(this);
+    this.setSignal('Automatic');
+    this.handleClick = this.handleClick.bind(this);
   }
 changeHandle = () => {
       console.log("called", this.trafficColor);
@@ -45,9 +44,8 @@ changeHandle = () => {
           break;
       }
 }
-setSignal(event) {
-    console.log(event.target.value);
-    if(event.target.value === "Automatic"){
+setSignal(value) {
+    if(value === "Automatic"){
       this.interval = window.setInterval(() => {
           console.log("timer");
           this.changeHandle();
@@ -57,37 +55,43 @@ setSignal(event) {
       clearInterval(this.interval);
     }
   }
-  handleClick1(){
-    this.setState({
-      red:true,
-      yellow: false,
-      green: false,
-      next: "yellow"
-    });
+  handleClick(event){
+    console.log(event);
+    switch (event) {
+      case "red":
+        this.setState({
+          red:true,
+          yellow: false,
+          green: false,
+          next: "yellow"
+        });
+        break;
+      case "yellow":
+        this.setState({
+          red:false,
+          yellow: true,
+          green: false,
+          next: "green"
+        });
+        break;
+      case "green":
+        this.setState({
+          red:false,
+          yellow: false,
+          green: true,
+          next: "red"
+        });
+        break;
+    }
   }
-  handleClick2(){
-    this.setState({
-      red:false,
-      yellow: true,
-      green: false,
-      next: "yellow"
-    });
-  }
-  handleClick3(){
-    this.setState({
-      red:false,
-      yellow: false,
-      green: true,
-      next: "yellow"
-    });
-  }
+
   render(){
     return(
       <div>
-        <div onChange={this.setSignal.bind(this)}><input type="radio" name="signaltype" value="Manual" defaultChecked/>Manual<input type="radio" name="signaltype" value="Automatic"/>Automatic</div>
-        <div className="container" style={{backgroundColor: this.state.red ? "red" : "black"}} onClick={this.handleClick1}></div>
-        <div className="container" style={{backgroundColor: this.state.yellow ? "yellow" : "black"}} onClick={this.handleClick2}></div>
-        <div className="container" style={{backgroundColor: this.state.green ? "green" : "black"}} onClick={this.handleClick3}></div>
+        <div><input type="radio" name="signaltype" value="Automatic" onChange={(event) => this.setSignal(event.target.value)} defaultChecked/>Automatic<input type="radio" name="signaltype" value="Manual" onChange={(event) => this.setSignal(event.target.value)}/>Manual</div>
+        <div className="container" style={{backgroundColor: this.state.red ? "red" : "black"}} onClick={this.handleClick.bind(this, 'red')}></div>
+        <div className="container" style={{backgroundColor: this.state.yellow ? "yellow" : "black"}} onClick={this.handleClick.bind(this, 'yellow')}></div>
+        <div className="container" style={{backgroundColor: this.state.green ? "green" : "black"}} onClick={this.handleClick.bind(this, 'green')}></div>
       </div>
     );
   }
